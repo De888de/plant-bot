@@ -84,11 +84,15 @@ bot.on('message', async (ctx) => {
     if (db.history.length > 500) db.history = db.history.slice(-500);
     saveDB(db);
 
+    const wikiName = encodeURIComponent(name.replace(/ /g, '_'));
+    const wikiUrl = `https://ru.wikipedia.org/wiki/${wikiName}`;
+    const wikiEn = `https://en.wikipedia.org/wiki/${wikiName}`;
     let msg = `🌿 *${name}*\n`;
     if (common) msg += `_${common}_\n\n`;
     msg += `Уверенность: ${score}%`;
     if (score < 40) msg += `\n_Низкая уверенность — попробуй фото листьев крупным планом_`;
-    await ctx.send(msg, { parse_mode: 'Markdown' });
+    msg += `\n\n[📖 Подробнее (RU)](${wikiUrl}) · [EN](${wikiEn})`;
+    await ctx.send(msg, { parse_mode: 'Markdown', disable_web_page_preview: true });
   } catch (e) {
     console.error(e);
     await ctx.send('Ошибка: ' + e.message);
